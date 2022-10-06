@@ -1,0 +1,122 @@
+{% load static %}
+
+{% block content %}
+
+
+
+
+
+
+
+
+<br />
+
+
+{% if replies_to_post %}
+
+
+{% for reply in replies_to_post %}
+<div class="post">
+
+
+    <section class="post-top-part">
+        <div class="profile-pic">
+            {%if reply.user_profile.profile_pic.name %}
+            <img src="{{ reply.user_profile.profile_pic.url }}" width="500">
+            {% endif %}
+            <!-- <img src="{{ post.user_profile.profile_pic.url }}" width="500"> -->
+        </div>
+
+        <span class="author-date">{{reply.author}} <span class="date">
+                {{reply.post_date}}
+            </span> </span>
+    </section>
+
+    {% if replyingToIsReply %}
+    <p>@{{replyingToAuthor}} </p>
+    {% endif %}
+
+    {{ reply.author}} | {{reply.pk}} | {{reply.post_datetime}}<br />
+
+    {% if user.id == reply.author.id %}
+    <a href="{% url 'delete-post' reply.pk %}">Delete</a>
+    {% endif %}
+    <br />
+    {{ reply.body|safe}}
+
+    <br />
+
+    {% if reply.video %}
+    <video width="500" controls autoplay>
+
+        <source src="{{reply.video.url}}" type="video/mp4">
+    </video>
+
+    {% endif %}
+
+    {% if reply.has_images %}
+
+    {% for image in image_list %}
+    {% if image.post.id == reply.id %}
+    <img src="{{ image.image.url}}" width="500">
+    {% endif %}
+    {% endfor %}
+
+
+    {% endif %}
+
+
+    {% if user.profile.id %}
+
+    <button id="like-button" class="like-button" name="{{ reply.like_count }}" value="{{ reply.pk }}">LIKED BY
+        {{reply.like_count}}</button>
+
+
+    <button id="open-reply-modal" value="{{reply.pk}}"> Reply</button>
+
+    {% endif %}
+
+    {% if show_replies_button %}
+    {% if reply.reply_count > 0 %}
+
+    {% if reply.reply_count == 1 %}
+    <button class="show-replies-btn" id="show-replies" value="{{reply.pk}}"
+        onclick="this.innerHTML=toggleReplies(this.innerHTML)">Show Reply</button>
+    {% else %}
+
+    <button class="show-replies-btn" id="show-replies" value="{{reply.pk}}"
+        onclick="this.innerHTML=toggleReplies(this.innerHTML)">Show {{ reply.reply_count }} Replies</button>
+    {% endif %}
+
+
+
+
+    {% endif %}
+
+
+    {% else %}
+    {% endif %}
+
+
+    <!-- <a href="{% url 'upload_reply' reply.pk %}">Reply</a> -->
+    <div class="replies-holder" id="replies-holder" value="{{reply.pk}}" style="display: none;">
+
+    </div>
+
+    <hr>
+
+</div>
+{% endfor %}
+{% endif %}
+
+<br /><br />
+
+<br />
+
+<button onclick="history.go(-1)">Back</button>
+<!-- <a href="{% url 'home-page'  %}">Back</a> -->
+
+
+
+
+{% endblock content %}
